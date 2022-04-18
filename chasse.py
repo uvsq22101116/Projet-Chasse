@@ -45,3 +45,76 @@ bouton_rep.grid(column=0, row=8)
 
 init_affichage(init_terrain())
 root.mainloop()
+
+def reproduction_proie():
+    for i in mat:
+        for j in mat[i]:
+            if mat[i][j]==mat[i][j-1]:
+                rep(i,j,1)
+            elif mat[i][j]==mat[i][j+1]:
+                rep(i,j,2)
+            elif mat[i][j]==mat[i-1][j-1]:
+                rep(i,j,3)
+            elif mat[i][j]==mat[i-1][j+1]:
+                rep(i,j,4)
+            elif mat[i][j]==mat[i-1][j]:
+                rep(i,j,5)
+            elif mat[i][j]==mat[i+1][j-1]:
+                rep(i,j,6)
+            elif mat[i][j]==mat[i+1][j+1]:
+                rep(i,j,7)
+            elif mat[i][j]==mat[i+1][j]:
+                rep(i,j,8)
+def rep(i,j,k):
+    global mat
+    global proie
+    if k==1:
+        a = random.randint(-2,1)
+        b = random.randint(-1,1)
+        while a == -2 or a == 1 and b == 0:
+            a = random.randint(-2,1)
+            b = random.randint(-1,1)
+    if k == 2:
+        a = random.randint(-1,2)
+        b = random.randint(-1,1)
+        while a == -1 or a == 2 and b == 0:
+            a = random.randint(-1,2)
+            b = random.randint(-1,1)
+    if k == 5:
+        a = random.randint(-1,1)
+        b = random.randint(-2,1)
+        while b == -2 or b == 1 and a == 0:
+            a = random.randint(-1,1)
+            b = random.randint(-2,1)
+    if k == 8:
+        a = random.randint(-1,1)
+        b = random.randint(-1,2)
+        while b == -1 or b == 2 and a == 0:
+            a = random.randint(-1,1)
+            b = random.randint(-1,2)
+    if k==3:
+        a = random.randint(-2,1)
+        b = random.randint(-2,1)
+        while (b == 1 and a == -2)or(b == - 2 and a == 1)or(b == 0 and a == 0)or(b == -1 and a == -1):
+            a = random.randint(-2,1)
+            b = random.randint(-2,1)
+    if k == 4:
+        a = random.randint(-2,1)
+        b = random.randint(-1,2)
+        while (b == -1 and a == -2)or(b == 2 and a == 1)or(b == 0 and a == 0)or(b == 1 and a == -1):
+            a = random.randint(-2,1)
+            b = random.randint(-1,2)
+    if k == 6:
+        a = random.randint(-1,2)
+        b = random.randint(-2,1)
+        while (b == -2 and a == -1)or(b == 1 and a == 2)or(b == 0 and a == 0)or(b == -1 and a == 1):
+            a = random.randint(-1,2)
+            b = random.randint(-2,1)
+    if k == 7:
+        a = random.randint(-1,2)
+        b = random.randint(-1,2)
+        while (b == 2 and a == -1)or(b == -1 and a == 2)or(b == 0 and a == 0)or(b == 1 and a == 1):
+            a = random.randint(-1,2)
+            b = random.randint(-1,2)
+    mat[i+a][j+b]=1
+    proie[i+a][j+b]=age_proie
