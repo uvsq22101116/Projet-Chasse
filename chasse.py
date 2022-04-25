@@ -17,34 +17,36 @@ import random as rd
 
 # Variables globales
 
+HAUTEUR = 810
+LARGEUR = 810
+PROIES = []
+PREDATEURS = []
+N = 30
+
+INTERRUPTION = False
 
 
 #########################
 
-# Partie principale
+# Fonctions
 
-root = tk.Tk()
-root.title("Génération de terrain")
+def init_affichage():
+    """ Affiche la grille en paramètre dans un canvas tkinter """
+    global HAUTEUR, LARGEUR, N, PROIES, PREDATEURS
+    hauteur_case = HAUTEUR // N
+    largeur_case = LARGEUR // N
 
-canvas = tk.Canvas(root, height=HAUTEUR, width=LARGEUR)
-canvas.grid(column=1, row=0, rowspan=9)
-
-# Création des widgets
-
-bouton_init = tk.Button(text="Initialisation", command=init_terrain)
-bouton_init.grid(column=0, row=0)
-
-bouton_init = tk.Button(text="Play", command=play)
-bouton_init.grid(column=0, row=1)
-
-bouton_int = tk.Button(text="Interrompre", command=interruption)
-bouton_int.grid(column=0, row=7)
-bouton_rep = tk.Button(text="Reprendre", command=reprendre)
-bouton_rep.grid(column=0, row=8)
-
-
-init_affichage(init_terrain())
-root.mainloop()
+    canvas.delete('all')
+    for i in range(N):
+        for j in range(N):
+            for k in range(len(PROIES)):
+                x = PROIES[k][-1][0]
+                y = PROIES[k][-1][1]
+                canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="black")
+            for l in range(len(PREDATEURS)):
+                x = PREDATEURS[l][-1][0]
+                y = PREDATEURS[l][-1][1]
+                canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="red")
 
 def reproduction_proie():
     for i in mat:
@@ -118,3 +120,30 @@ def rep(i,j,k):
             b = random.randint(-1,2)
     mat[i+a][j+b]=1
     proie[i+a][j+b]=age_proie
+
+#########################
+
+# Partie principale
+
+root = tk.Tk()
+root.title("Génération de terrain")
+
+canvas = tk.Canvas(root, height=HAUTEUR, width=LARGEUR)
+canvas.grid(column=1, row=0, rowspan=9)
+
+# Création des widgets
+
+bouton_init = tk.Button(text="Initialisation", command=init_terrain)
+bouton_init.grid(column=0, row=0)
+
+bouton_init = tk.Button(text="Play", command=play)
+bouton_init.grid(column=0, row=1)
+
+bouton_int = tk.Button(text="Interrompre", command=interruption)
+bouton_int.grid(column=0, row=7)
+bouton_rep = tk.Button(text="Reprendre", command=reprendre)
+bouton_rep.grid(column=0, row=8)
+
+
+init_affichage()
+root.mainloop()
