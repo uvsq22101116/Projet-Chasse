@@ -47,19 +47,16 @@ def init_affichage():
                 x = PREDATEURS[l][-1][0]
                 y = PREDATEURS[l][-1][1]
                 canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="red")
-                
-PROIES=[]
 
-def creer_proies(Apro, (x,y)):
+def creer_proies(Apro=5, x=15, y=15):
     global PROIES 
     a = 0
     if len(PROIES) >= 1:
          a = PROIES[-1][0] + 1
-         PROIES.append (a, Apro, [x,y])
-print(PROIES)
+    PROIES.append(a, Apro, [x,y])
 
 
-def creer_n_proies(Npro):
+def creer_n_proies(Npro=5):
     for i in range(Npro):
         x = rd.randint(0, 29) 
         y = rd.randint(0, 29) 
