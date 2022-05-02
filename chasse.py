@@ -230,27 +230,51 @@ def deplacement_predateurs():
 def mouvement_predateur(pr):
     if pr[-1][0] > pr[-2][0] and pr[-1][1] > pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]-1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]+1
 
     elif pr[-1][0] < pr[-2][0] and pr[-1][1] == pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]
 
     elif pr[-1][0] > pr[-2][0] and pr[-1][1] < pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]+1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]-1
 
     elif pr[-1][0] == pr[-2][0] and pr[-1][1] > pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]-1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]+1
 
     elif pr[-1][0] == pr[-2][0] and pr[-1][1] < pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]+1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]-1
 
     elif pr[-1][0] < pr[-2][0] and pr[-1][1] > pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]-1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]+1
 
     elif pr[-1][0] > pr[-2][0] and pr[-1][1] == pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]
 
     elif pr[-1][0] < pr[-2][0] and pr[-1][1] < pr[-2][1]:
         pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]+1
+        for i in range(len(PREDATEURS)):
+            if PREDATEURS[i][0] != pr[0] and PREDATEURS[i][-1] == pr[-1]:
+                pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]-1
 
 def manger():
     for i in range(len(PREDATEURS)):
