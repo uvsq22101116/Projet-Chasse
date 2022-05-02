@@ -11,6 +11,8 @@
 
 import tkinter as tk
 import random as rd
+from math import sqrt
+import ast
 
 
 ########################
@@ -19,9 +21,10 @@ import random as rd
 
 HAUTEUR = 810
 LARGEUR = 810
+N = 30
 PROIES = []
 PREDATEURS = []
-N = 30
+MIAM = 5
 
 INTERRUPTION = False
 
@@ -30,6 +33,8 @@ INTERRUPTION = False
 
 # Fonctions
 
+# Affichage
+
 def init_affichage():
     """ Affiche la grille en paramètre dans un canvas tkinter """
     global HAUTEUR, LARGEUR, N, PROIES, PREDATEURS
@@ -37,16 +42,16 @@ def init_affichage():
     largeur_case = LARGEUR // N
 
     canvas.delete('all')
-    for i in range(N):
-        for j in range(N):
-            for k in range(len(PROIES)):
-                x = PROIES[k][-1][0]
-                y = PROIES[k][-1][1]
-                canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="black")
-            for l in range(len(PREDATEURS)):
-                x = PREDATEURS[l][-1][0]
-                y = PREDATEURS[l][-1][1]
-                canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="red")
+    for k in range(len(PROIES)):
+        x = PROIES[k][-1][0]
+        y = PROIES[k][-1][1]
+        canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="black")
+    for l in range(len(PREDATEURS)):
+        x = PREDATEURS[l][-1][0]
+        y = PREDATEURS[l][-1][1]
+        canvas.create_rectangle((x*largeur_case), (y*hauteur_case), (x*largeur_case+largeur_case), (y*hauteur_case+hauteur_case), fill="red")
+
+# Création des proies et des prédateurs
 
 def creer_proies(Apro=5, x=15, y=15):
     global PROIES 
@@ -55,12 +60,80 @@ def creer_proies(Apro=5, x=15, y=15):
          a = PROIES[-1][0] + 1
     PROIES.append(a, Apro, [x,y])
 
-
 def creer_n_proies(Npro=5):
     for i in range(Npro):
         x = rd.randint(0, 29) 
         y = rd.randint(0, 29) 
         creer_proies(x = x, y = y)
+
+# Mouvements
+
+def mouvement():
+    deplacement_proies()
+    deplacement_predateurs()
+    init_affichage()
+    manger()
+    age()
+    creer_n_proies(1)
+    if len(PREDATEURS) == 0:
+        return print("Les proies ont gagné !")
+    elif len(PROIES) == 0:
+        return print("Les prédateurs ont gagné !")
+    elif INTERRUPTION == False:
+        root.after(100, mouvement)
+
+# Proies
+
+def deplacement_proies():
+    for i in range(len(PROIES)):
+        # Vérification des cases libres
+        nb = [0, 1, 2, 3, 4, 5, 6, 7]
+        dir = rd.choice(nb)
+        new_coords = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+        for j in range(8):
+            if j == 0:
+                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]-1
+            if j == 1:
+                x, y = PROIES[i][-1][0], PROIES[i][-1][1]-1
+            if j == 2:
+                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]-1
+            if j == 3:
+                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]
+            if j == 4:
+                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]
+            if j == 5:
+                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]+1
+            if j == 6:
+                x, y = PROIES[i][-1][0], PROIES[i][-1][1]+1
+            if j == 7:
+                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]+1
+            if verif_cases(x, y) is False:
+                nb.remove(j)
+        # Déplacement
+        if len(nb) == 0:
+            return
+        dir = rd.choice(nb)
+        PROIES[i][-1][0], PROIES[i][-1][1] = PROIES[i][-1][0]+new_coords[dir][0], PROIES[i][-1][1]+new_coords[dir][1]
+
+def verif_cases(x, y):
+    if x <= 0 or x >= 29 or y <= 0 or y >= 29:
+        return False
+    for i in range(len(PROIES)):
+        if x == PROIES[i][-1][0] and y == PROIES[i][-1][1]:
+            return False
+    for j in range(len(PREDATEURS)):
+        if x == PREDATEURS[j][-1][0] and y == PREDATEURS[j][-1][1]:
+            return False
+    return True
+
+def age():
+    i = 0
+    while i < len(PROIES):
+        if PROIES[i][-2] == 0:
+            PROIES.remove(PROIES[i])
+        else:
+            PROIES[i][-2] -= 1
+            i += 1
 
 def reproduction_proie():
     for i in mat:
@@ -134,6 +207,59 @@ def rep(i,j,k):
             b = random.randint(-1,2)
     mat[i+a][j+b]=1
     proie[i+a][j+b]=age_proie
+
+# Prédateurs
+
+def deplacement_predateurs():
+    for i in range(len(PREDATEURS)):
+        coords = PREDATEURS[i][-1]
+        distance = 1000
+        cible = []
+        for j in range(len(PROIES)):
+            distancetmp = sqrt((PREDATEURS[i][-1][0] - PROIES[j][-1][0])**2 + (PREDATEURS[i][-1][1] - PROIES[j][-1][1])**2)
+            if distancetmp <= distance:
+                distance = distancetmp
+                cible = PROIES[j][-1]
+            PREDATEURS[i][-2] = cible
+        for k in range(len(PREDATEURS)):
+            if PREDATEURS[k][-1] == coords and k != i:
+                break
+        mouvement_predateur(PREDATEURS[i])
+
+
+def mouvement_predateur(pr):
+    if pr[-1][0] > pr[-2][0] and pr[-1][1] > pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]-1
+
+    elif pr[-1][0] < pr[-2][0] and pr[-1][1] == pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]
+
+    elif pr[-1][0] > pr[-2][0] and pr[-1][1] < pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]+1
+
+    elif pr[-1][0] == pr[-2][0] and pr[-1][1] > pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]-1
+
+    elif pr[-1][0] == pr[-2][0] and pr[-1][1] < pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0], pr[-1][1]+1
+
+    elif pr[-1][0] < pr[-2][0] and pr[-1][1] > pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]-1
+
+    elif pr[-1][0] > pr[-2][0] and pr[-1][1] == pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]-1, pr[-1][1]
+
+    elif pr[-1][0] < pr[-2][0] and pr[-1][1] < pr[-2][1]:
+        pr[-1][0], pr[-1][1] = pr[-1][0]+1, pr[-1][1]+1
+
+def manger():
+    for i in range(len(PREDATEURS)):
+        for j in range(len(PROIES)):
+            if PREDATEURS[i][-1] == PROIES[j][-1]:
+                PROIES.remove(PROIES[j])
+                break
+
+# Sauvegarde, chargement, interruption et reprise
 
 #########################
 
