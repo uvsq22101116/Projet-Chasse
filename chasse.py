@@ -65,55 +65,44 @@ def creer_n_proies(Npro=5):
         x = rd.randint(0, 29) 
         y = rd.randint(0, 29) 
         creer_proies(x = x, y = y)
+# Mouvements généraux
 
-# Mouvements
-
-def mouvement():
+def simulation():
     deplacement_proies()
     deplacement_predateurs()
     init_affichage()
     manger()
-    age()
-    creer_n_proies(1)
+    #age()
+    #creer_n_proies(1)
     if len(PREDATEURS) == 0:
         return print("Les proies ont gagné !")
     elif len(PROIES) == 0:
         return print("Les prédateurs ont gagné !")
     elif INTERRUPTION == False:
-        root.after(100, mouvement)
+        root.after(150, simulation)
 
-# Proies
-
-def deplacement_proies():
-    for i in range(len(PROIES)):
-        # Vérification des cases libres
-        nb = [0, 1, 2, 3, 4, 5, 6, 7]
-        dir = rd.choice(nb)
-        new_coords = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
-        for j in range(8):
-            if j == 0:
-                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]-1
-            if j == 1:
-                x, y = PROIES[i][-1][0], PROIES[i][-1][1]-1
-            if j == 2:
-                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]-1
-            if j == 3:
-                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]
-            if j == 4:
-                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]
-            if j == 5:
-                x, y = PROIES[i][-1][0]-1, PROIES[i][-1][1]+1
-            if j == 6:
-                x, y = PROIES[i][-1][0], PROIES[i][-1][1]+1
-            if j == 7:
-                x, y = PROIES[i][-1][0]+1, PROIES[i][-1][1]+1
-            if verif_cases(x, y) is False:
-                nb.remove(j)
-        # Déplacement
-        if len(nb) == 0:
-            return
-        dir = rd.choice(nb)
-        PROIES[i][-1][0], PROIES[i][-1][1] = PROIES[i][-1][0]+new_coords[dir][0], PROIES[i][-1][1]+new_coords[dir][1]
+def mouvements(pr):
+    nb = [0, 1, 2, 3, 4, 5, 6, 7]
+    for j in range(8):
+        if j == 0:
+            x, y = pr[-1][0]-1, pr[-1][1]-1
+        if j == 1:
+            x, y = pr[-1][0], pr[-1][1]-1
+        if j == 2:
+            x, y = pr[-1][0]+1, pr[-1][1]-1
+        if j == 3:
+            x, y = pr[-1][0]-1, pr[-1][1]
+        if j == 4:
+            x, y = pr[-1][0]+1, pr[-1][1]
+        if j == 5:
+            x, y = pr[-1][0]-1, pr[-1][1]+1
+        if j == 6:
+            x, y = pr[-1][0], pr[-1][1]+1
+        if j == 7:
+            x, y = pr[-1][0]+1, pr[-1][1]+1
+        if verif_cases(x, y) is False:
+            nb.remove(j)
+    return nb
 
 def verif_cases(x, y):
     if x <= 0 or x >= 29 or y <= 0 or y >= 29:
@@ -125,6 +114,18 @@ def verif_cases(x, y):
         if x == PREDATEURS[j][-1][0] and y == PREDATEURS[j][-1][1]:
             return False
     return True
+
+# Proies
+
+def deplacement_proies():
+    for i in range(len(PROIES)):
+        # Vérification des cases libres
+        new_coords = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+        nb = mouvements(PROIES[i])
+        # Déplacement
+        if len(nb) != 0:
+            dir = rd.choice(nb)
+            PROIES[i][-1][0], PROIES[i][-1][1] = PROIES[i][-1][0]+new_coords[dir][0], PROIES[i][-1][1]+new_coords[dir][1]
 
 def age():
     i = 0
@@ -207,25 +208,31 @@ def rep(i,j,k):
             b = random.randint(-1,2)
     mat[i+a][j+b]=1
     proie[i+a][j+b]=age_proie
-
 # Prédateurs
 
 def deplacement_predateurs():
     for i in range(len(PREDATEURS)):
-        coords = PREDATEURS[i][-1]
         distance = 1000
         cible = []
         for j in range(len(PROIES)):
             distancetmp = sqrt((PREDATEURS[i][-1][0] - PROIES[j][-1][0])**2 + (PREDATEURS[i][-1][1] - PROIES[j][-1][1])**2)
             if distancetmp <= distance:
                 distance = distancetmp
-                cible = PROIES[j][-1]
+                if MODE_PRE == 0:
+                    cible = PROIES[j][-1]
+                else:
+                    if distance <= 12:
+                        cible = PROIES[j][-1]
             PREDATEURS[i][-2] = cible
-        for k in range(len(PREDATEURS)):
-            if PREDATEURS[k][-1] == coords and k != i:
-                break
-        mouvement_predateur(PREDATEURS[i])
-
+        if cible == []:
+            new_coords = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+            nb = mouvements(PREDATEURS[i])
+            if len(nb) == 0:
+                return
+            dir = rd.choice(nb)
+            PREDATEURS[i][-1][0], PREDATEURS[i][-1][1] = PREDATEURS[i][-1][0]+new_coords[dir][0], PREDATEURS[i][-1][1]+new_coords[dir][1]
+        else:
+            mouvement_predateur(PREDATEURS[i])
 
 def mouvement_predateur(pr):
     if pr[-1][0] > pr[-2][0] and pr[-1][1] > pr[-2][1]:
@@ -283,7 +290,9 @@ def manger():
                 PROIES.remove(PROIES[j])
                 break
 
-# Sauvegarde, chargement, interruption et reprise
+# Divers
+
+
 
 #########################
 
