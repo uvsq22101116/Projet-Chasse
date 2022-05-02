@@ -25,6 +25,7 @@ N = 30
 PROIES = []
 PREDATEURS = []
 MIAM = 5
+listPr = []
 
 INTERRUPTION = False
 
