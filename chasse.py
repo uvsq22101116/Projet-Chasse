@@ -136,78 +136,66 @@ def age():
             PROIES[i][-2] -= 1
             i += 1
 
-def reproduction_proie():
-    for i in mat:
-        for j in mat[i]:
-            if mat[i][j]==mat[i][j-1]:
-                rep(i,j,1)
-            elif mat[i][j]==mat[i][j+1]:
-                rep(i,j,2)
-            elif mat[i][j]==mat[i-1][j-1]:
-                rep(i,j,3)
-            elif mat[i][j]==mat[i-1][j+1]:
-                rep(i,j,4)
-            elif mat[i][j]==mat[i-1][j]:
-                rep(i,j,5)
-            elif mat[i][j]==mat[i+1][j-1]:
-                rep(i,j,6)
-            elif mat[i][j]==mat[i+1][j+1]:
-                rep(i,j,7)
-            elif mat[i][j]==mat[i+1][j]:
-                rep(i,j,8)
-def rep(i,j,k):
-    global mat
-    global proie
-    if k==1:
-        a = random.randint(-2,1)
-        b = random.randint(-1,1)
-        while a == -2 or a == 1 and b == 0:
-            a = random.randint(-2,1)
-            b = random.randint(-1,1)
-    if k == 2:
-        a = random.randint(-1,2)
-        b = random.randint(-1,1)
-        while a == -1 or a == 2 and b == 0:
-            a = random.randint(-1,2)
-            b = random.randint(-1,1)
-    if k == 5:
-        a = random.randint(-1,1)
-        b = random.randint(-2,1)
-        while b == -2 or b == 1 and a == 0:
-            a = random.randint(-1,1)
-            b = random.randint(-2,1)
-    if k == 8:
-        a = random.randint(-1,1)
-        b = random.randint(-1,2)
-        while b == -1 or b == 2 and a == 0:
-            a = random.randint(-1,1)
-            b = random.randint(-1,2)
-    if k==3:
-        a = random.randint(-2,1)
-        b = random.randint(-2,1)
-        while (b == 1 and a == -2)or(b == - 2 and a == 1)or(b == 0 and a == 0)or(b == -1 and a == -1):
-            a = random.randint(-2,1)
-            b = random.randint(-2,1)
-    if k == 4:
-        a = random.randint(-2,1)
-        b = random.randint(-1,2)
-        while (b == -1 and a == -2)or(b == 2 and a == 1)or(b == 0 and a == 0)or(b == 1 and a == -1):
-            a = random.randint(-2,1)
-            b = random.randint(-1,2)
-    if k == 6:
-        a = random.randint(-1,2)
-        b = random.randint(-2,1)
-        while (b == -2 and a == -1)or(b == 1 and a == 2)or(b == 0 and a == 0)or(b == -1 and a == 1):
-            a = random.randint(-1,2)
-            b = random.randint(-2,1)
-    if k == 7:
-        a = random.randint(-1,2)
-        b = random.randint(-1,2)
-        while (b == 2 and a == -1)or(b == -1 and a == 2)or(b == 0 and a == 0)or(b == 1 and a == 1):
-            a = random.randint(-1,2)
-            b = random.randint(-1,2)
-    mat[i+a][j+b]=1
-    proie[i+a][j+b]=age_proie
+def ReproPro():
+    global listPr
+    for i in range(len(PROIES)):
+        for j in range(len(PROIES)):
+            for k in range(-1,1):
+                if PROIES[i][3][0]==PROIES[j][3][1]+k:
+                    for l in (-1,1):
+                        if PROIES[i][3][0]==PROIES[j][3][1]+l:
+                            verif(i,j)
+    listPr = []
+
+def verif(i,j):
+    global listPr
+    if j != i :
+        h = 0
+        for k in listPr:
+             if k == j or k == i:
+                h=1
+        if h == 0:
+            rep(i,j)
+            listPr.append(j)
+            listPr.append(i)
+
+
+def rep(i,j):
+    x1 = PROIES[i][3][0]
+    y1 = PROIES[i][3][1]
+    x2 = PROIES[j][3][0]
+    y2 = PROIES[j][3][1]
+    xd = x1 - x2
+    yd = y1 - y2
+    h = 0
+    while h == 0:
+        h = 1
+        if xd == 1:
+            x = random.randint(-2,1)
+        else:
+            x = random.randint(-1,1-xd)
+        if yd == 1:
+            y = random.randint(-2,1)
+        else:
+            y = random.randint(-1,1-yd)
+        if xd != 0 and yd != 0:
+            if x == -2*xd and y == 1*yd:
+                h = 0
+            if x == 1*xd and y == -2*yd:
+                h = 0
+        if verif_cases(x1 + x,y1 + y) == False:
+            h = 0
+    PROIES.append([0,Fpro, Apro,(x1 + x,y1 + y)])
+
+
+def verif_cases(x, y):
+    if x <= 0 or x >= 29 or y <= 0 or y >= 29:
+        return False
+    for i in range(len(PROIES)):
+        if x == PROIES[i][-1][0] and y == PROIES[i][-1][1]:
+            return False
+    return True
+
 # Prédateurs
 
 def deplacement_predateurs():
