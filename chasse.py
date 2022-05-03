@@ -341,16 +341,21 @@ canvas.grid(column=1, row=0, rowspan=9)
 
 # Création des widgets
 
-bouton_init = tk.Button(text="Initialisation", command=init_terrain)
-bouton_init.grid(column=0, row=0)
-
-bouton_init = tk.Button(text="Play", command=play)
+bouton_init = tk.Button(text="Play", command=simulation)
 bouton_init.grid(column=0, row=1)
 
+bouton_pre = tk.Button(text="Mode Super Prédateurs", bg="red3", command=superpredateurs)
+bouton_pre.grid(column=0, row=3)
+
 bouton_int = tk.Button(text="Interrompre", command=interruption)
-bouton_int.grid(column=0, row=7)
+bouton_int.grid(column=0, row=5)
 bouton_rep = tk.Button(text="Reprendre", command=reprendre)
-bouton_rep.grid(column=0, row=8)
+bouton_rep.grid(column=0, row=6)
+
+bouton_save = tk.Button(text="Sauvegarder", command=sauvegarder)
+bouton_save.grid(column=0, row=7)
+bouton_char = tk.Button(text="Charger", command=charger)
+bouton_char.grid(column=0, row=8)
 
 
 init_affichage()
