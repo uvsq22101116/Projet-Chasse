@@ -280,7 +280,53 @@ def manger():
                 break
 
 # Divers
+ def superpredateurs():
+    global MODE_PRE
+    if MODE_PRE == 0:
+        bouton_pre['text'] = "Mode Super Predateurs"
+        bouton_pre['bg'] = "red3"
+        MODE_PRE = 1
+    else:
+        bouton_pre['text'] = "Mode Normal"
+        bouton_pre['bg'] = "SystemButtonFace"
+        MODE_PRE = 0
 
+def sauvegarder(fichier="saves.txt"):
+    """ file ->
+        Sauvegarde la configuration à la fin du fichier saves.txt
+    """
+    sauvegardes = open(fichier, "a")
+    sauvegardes.write(str([PROIES, PREDATEURS]) + "\n")
+    sauvegardes.close()
+
+def charger(fichier="saves.txt"):
+    """ file ->
+        Charge la sauvegarde associée au numéro donnée
+    """
+    global PROIES, PREDATEURS
+    ligne = int(input("Entrez le numéro de la sauvegarde : "))
+    sauvegardes = open(fichier, "r")
+    save = sauvegardes.readlines()
+    if ligne >= len(save)+1 or ligne <= 0:
+        return print("Sauvegarde inexistante !")
+    save = save[ligne-1]
+    save = ast.literal_eval(save)
+    PROIES, PREDATEURS = save[0], save[1]
+    init_affichage()
+    sauvegardes.close()
+
+def interruption():
+    """ Interrompt la stabilisation """
+    global INTERRUPTION
+    INTERRUPTION = True
+
+def reprendre():
+    """ -> func
+        Reprend la stabilisation
+    """
+    global INTERRUPTION
+    INTERRUPTION = False
+    return simulation()
 
 
 #########################
